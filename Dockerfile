@@ -16,8 +16,8 @@ RUN apt-get update && apt-get install -y libxml2-dev \
         libfreetype6-dev \
         git \
         zip \
+        # add package cron #
         cron \
-        vim \
         --no-install-recommends \
         && pecl install mcrypt-1.0.2 \
         && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
@@ -39,3 +39,4 @@ ADD composer.phar /var/www/html/
 RUN  php composer.phar -V 
 
 EXPOSE 80
+
