@@ -4,9 +4,8 @@ WORKDIR /var/www/html
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/
 
-COPY . /var/www/html
-
 ENV TZ=Asia/Jakarta
+
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install package for php
@@ -18,7 +17,7 @@ RUN apt-get update && apt-get install -y libxml2-dev \
         libssl-dev zlib1g-dev \
         libpng-dev libjpeg-dev \
         libfreetype6-dev \
-        git \
+
         libzip-dev \
 
         #https://github.com/docker-library/php/issues/880 
@@ -41,15 +40,13 @@ RUN apt-get update && apt-get install -y libxml2-dev \
         && rm -r /var/lib/apt/lists/*
 
 # Enable rewrite module apache #
-RUN a2enmod rewrite && mv /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
-RUN  sed -i -e 's/expose_php = On/expose_php = Off/' /usr/local/etc/php/php.ini
-RUN echo "ServerTokens Prod" >> /etc/apache2/apache2.conf
-RUN echo "ServerSignature Off" >> /etc/apache2/apache2.conf
-
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
+RUN a2enmod rewrite && mv /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
+    && sed -i -e 's/expose_php = On/expose_php = Off/' /usr/local/etc/php/php.ini \
+    && echo "ServerTokens Prod" >> /etc/apache2/apache2.conf \
+    && echo "ServerSignature Off" >> /etc/apache2/apache2.conf \
+    && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
     && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf 
     #&& sed -ri -e 's/upload_max_filesize = .*/upload_max_filesize = ${MAX_UPLOAD_SIZE}/' /usr/local/etc/php/php.ini
-
 
 # add composer.phar 
 ADD composer.phar /var/www/html/
