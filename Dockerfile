@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y libxml2-dev \
         libpng-dev libjpeg-dev \
         libfreetype6-dev \
         git \
+        libzip-dev \ 
         zip \
         # add package cron #
         cron \
@@ -24,7 +25,9 @@ RUN apt-get update && apt-get install -y libxml2-dev \
         # https://github.com/docker-library/php/issues/931
         && docker-php-ext-configure gd --with-jpeg=/usr/include/ --with-freetype=/usr/include/ \
         #&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-        && docker-php-ext-configure zip --with-libzip \ 
+
+        # https://stackoverflow.com/questions/48700453/docker-image-build-with-php-zip-extension-shows-bundled-libzip-is-deprecated-w
+        && docker-php-ext-configure zip \ 
         && docker-php-ext-install pdo_mysql pdo_pgsql pgsql gd xml zip mbstring exif \
         && docker-php-ext-enable mcrypt \ 
         && apt-get purge -y \
