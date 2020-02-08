@@ -15,7 +15,10 @@ RUN apt-get update && apt-get install -y libxml2-dev \
         libpng-dev libjpeg-dev \
         libfreetype6-dev \
         git \
-        libzip-dev \ 
+        libzip-dev \
+
+        #https://github.com/docker-library/php/issues/880 
+        libonig-dev \
         zip \
         # add package cron #
         cron \
