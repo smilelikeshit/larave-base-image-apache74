@@ -2,6 +2,10 @@ FROM php:7.4-apache
 
 WORKDIR /var/www/html
 
+ENV APACHE_DOCUMENT_ROOT /var/www/html/
+
+COPY . /var/www/html
+
 ENV TZ=Asia/Jakarta
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -41,6 +45,10 @@ RUN a2enmod rewrite && mv /usr/local/etc/php/php.ini-production /usr/local/etc/p
 RUN  sed -i -e 's/expose_php = On/expose_php = Off/' /usr/local/etc/php/php.ini
 RUN echo "ServerTokens Prod" >> /etc/apache2/apache2.conf
 RUN echo "ServerSignature Off" >> /etc/apache2/apache2.conf
+
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
+    && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf 
+    #&& sed -ri -e 's/upload_max_filesize = .*/upload_max_filesize = ${MAX_UPLOAD_SIZE}/' /usr/local/etc/php/php.ini
 
 
 # add composer.phar 
