@@ -19,13 +19,16 @@ RUN apt-get update && apt-get install -y libxml2-dev \
         # add package cron #
         cron \
         --no-install-recommends \
-        && pecl install mcrypt-1.0.2 \
-        && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+        # mcrypt 1.0.3 for php version => 7.4.2
+        && pecl install mcrypt-1.0.3 \
+        # https://github.com/docker-library/php/issues/931
+        && docker-php-ext-configure gd --with-png=/usr/include/ --with-jpeg=/usr/include/ --with-freetype=/usr/include/ \
+        #&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
         && docker-php-ext-configure zip --with-libzip \ 
         && docker-php-ext-install pdo_mysql pdo_pgsql pgsql gd xml zip mbstring exif \
         && docker-php-ext-enable mcrypt \ 
         && apt-get purge -y \
-        && rm -r /var/lib/apt/lists/* 
+        && rm -r /var/lib/apt/lists/*
 
 # Enable rewrite module apache #
 RUN a2enmod rewrite && mv /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
